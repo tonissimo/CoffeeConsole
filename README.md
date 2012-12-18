@@ -14,5 +14,11 @@ Features
    * Command+Enter or Shift+Enter to run the current script
    * Available in the Chrome Web Store: http://snk.ms/coffeeconsole
 
+Changes
+
+   * Added “Toggle Compiled Panel” button
+   * Enabled soft tabs and indent changed to 2 spaces 
+   * Theme changet to “chrome”
+
 Copyright 2012, Jonathan Snook
 Released under the MIT License

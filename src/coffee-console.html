@@ -13,8 +13,7 @@
             left: 0;
             z-index: 1;
             background-color:#EEE;
-            font-style: Monaco, Menlo, monospace;
-            font-size: 10pt;
+            font: 12px monospace;
         }
         #cc-results {
             position: fixed;
@@ -23,15 +22,22 @@
             right: 0;
             left: 50%;
             z-index: 1;
-            font-style: Monaco, Menlo, monospace;
-            font-size: 10pt;
+            font: 12px monospace;
         }
         #runcc {
+            position: fixed;
+            left: 10px;
+            bottom: 5px;
+            z-index: 3;
+        }
+        #togglecc {
             position: fixed;
             right: 10px;
             bottom: 5px;
             z-index: 3;
         }
+        .single-panel #cc-editor { right: 0; }
+        .single-panel #cc-results { display: none; }
         #error {
             position: fixed;
             bottom: 0;
@@ -56,65 +62,14 @@
     <div id="cc-editor"></div>
     <div id="cc-results"></div>
     <div id="error"></div>
+    <button id="togglecc">Toggle Panel</button>
     <button id="runcc">Run</button>
 
 <script src="ace/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace/mode-coffee-noconflict.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace/mode-javascript-noconflict.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace/theme-twilight-noconflict.js" type="text/javascript" charset="utf-8"></script>
-<script>
-var tabId = chrome.devtools.inspectedWindow.tabId;
-var err = document.getElementById('error');
-var editor = ace.edit("cc-editor");
-editor.setTheme("ace/theme/twilight");
-editor.session.setMode("ace/mode/coffee");
-editor.setShowPrintMargin(false);
-
-var compiled = ace.edit("cc-results");
-compiled.setTheme("ace/theme/twilight");
-compiled.session.setMode("ace/mode/javascript");
-compiled.setShowPrintMargin(false);
-
-
-function compileIt(){
-    chrome.devtools.inspectedWindow.eval( compiled.session.getValue(), function(result, isException) {});
-}
-
-function update(){
-    try {
-        var compiledSource = CoffeeScript.compile( editor.session.getValue(), {bare:true});
-        compiled.session.setValue(compiledSource);
-        err.className = 'is-hidden';
-    } catch (error) {
-        err.className = '';
-        err.innerHTML = error.message; 
-    }
-    localStorage.setItem("state" + tabId, editor.session.getValue()); 
-}
-
-schedule = function(fn, timeout) {
-    if (fn.$timer) return;
-    fn.$timer = setTimeout(function() {fn.$timer = null; fn()}, timeout || 10);
-}
-
-editor.on("change", function(e){
-    schedule(update, 20);
-});
-
-var compileOptions = {
-    name: "compileIt",
-    exec: compileIt,
-    bindKey: "Ctrl-Return|Command-Return|Shift-Return"
-};
-
-editor.commands.addCommand(compileOptions);
-compiled.commands.addCommand(compileOptions);
-
-document.getElementById('runcc').addEventListener('click', compileIt);
-editor.session.setValue(localStorage.getItem("state" + tabId)); 
-schedule(function(){ editor.focus() }, 20);
-
-</script>
+<script src="coffee-console.js" type="text/javascript" charset="utf-8"></script>
 
 </body>
 </html>
